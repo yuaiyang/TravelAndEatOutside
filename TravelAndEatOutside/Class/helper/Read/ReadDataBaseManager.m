@@ -2,7 +2,7 @@
 //  ReadDataBaseManager.m
 //  TravelAndEatOutside
 //
-//  Created by lanou4g on 15/10/21.
+//  Created by 雨爱阳 on 15/10/21.
 //  Copyright © 2015年 王振. All rights reserved.
 //
 
