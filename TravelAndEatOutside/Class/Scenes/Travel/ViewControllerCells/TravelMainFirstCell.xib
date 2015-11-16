@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" restorationIdentifier="Tfirst_id" id="gTV-IL-0wX" customClass="TravelMainFirstCell">
+            <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Su7-Wg-RcS">
+                        <rect key="frame" x="0.0" y="0.0" width="80" height="80"/>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="类" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rAp-S2-6hb">
+                        <rect key="frame" x="0.0" y="80" width="80" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="7U5-gk-ASl"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="Su7-Wg-RcS" secondAttribute="bottom" constant="20" id="4fO-TL-PxD"/>
+                <constraint firstAttribute="trailing" secondItem="rAp-S2-6hb" secondAttribute="trailing" id="7tE-ML-QoX"/>
+                <constraint firstItem="Su7-Wg-RcS" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="L8W-Ac-iKq"/>
+                <constraint firstItem="Su7-Wg-RcS" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="bl9-ui-jX3"/>
+                <constraint firstAttribute="bottom" secondItem="rAp-S2-6hb" secondAttribute="bottom" id="eLD-NS-DIe"/>
+                <constraint firstAttribute="trailing" secondItem="Su7-Wg-RcS" secondAttribute="trailing" id="txz-LD-w9w"/>
+                <constraint firstItem="rAp-S2-6hb" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="vBB-hO-Tv7"/>
+            </constraints>
+            <size key="customSize" width="103" height="151"/>
+            <connections>
+                <outlet property="classNameLabel" destination="rAp-S2-6hb" id="e2h-uj-W9p"/>
+                <outlet property="imgView" destination="Su7-Wg-RcS" id="lso-XP-zAp"/>
+            </connections>
+            <point key="canvasLocation" x="447.5" y="396.5"/>
+        </collectionViewCell>
+    </objects>
+</document>

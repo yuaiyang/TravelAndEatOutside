@@ -1,0 +1,13 @@
+//
+//  TravelCityHeaderViewCell.h
+//  TravelAndEatOutside
+//
+//  Created by lanou3g on 15/10/22.
+//  Copyright © 2015年 雨爱阳. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface TravelCityHeaderViewCell : UITableViewCell
+
+@end

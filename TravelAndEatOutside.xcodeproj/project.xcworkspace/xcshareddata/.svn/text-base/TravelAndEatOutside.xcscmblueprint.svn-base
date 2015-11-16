@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "01f97d08-b2ca-46ec-9af5-6fbf43cbf4d3",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "01f97d08-b2ca-46ec-9af5-6fbf43cbf4d3" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "01f97d08-b2ca-46ec-9af5-6fbf43cbf4d3" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "26CF97D0-0E9C-4102-9E2F-50488994A1D4",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "01f97d08-b2ca-46ec-9af5-6fbf43cbf4d3" : "class_28wangzhengyu\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "TravelAndEatOutside",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "TravelAndEatOutside\/TravelAndEatOutside.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "http:\/\/www.svnchina.com\/svn\/class_28wangzhengyu",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "01f97d08-b2ca-46ec-9af5-6fbf43cbf4d3"
+    }
+  ]
+}

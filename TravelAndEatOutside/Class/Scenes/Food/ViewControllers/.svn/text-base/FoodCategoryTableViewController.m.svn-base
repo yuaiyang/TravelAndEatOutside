@@ -1,0 +1,130 @@
+//
+//  FoodCityTableViewController.m
+//  TravelAndEatOutside
+//
+//  Created by lanou3g on 15/10/23.
+//  Copyright © 2015年 雨爱阳. All rights reserved.
+//
+
+#import "FoodCategoryTableViewController.h"
+#import "FoodUrls.h"
+
+@interface FoodCategoryTableViewController ()
+
+@property (nonatomic,strong)NSMutableArray * categoryArray;// 存储类型
+@property (nonatomic,strong)NSMutableArray * subcategoryArray;//存储类型下子类型
+
+
+@end
+
+@implementation FoodCategoryTableViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // 解析数据
+    [self requestByGETUseHTTPManager];
+}
+
+// 解析数据
+- (void)requestByGETUseHTTPManager {
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    
+    // 一个操作对象  和 JSON 内容  responseObject 就是 JSON 串
+    __weak FoodCategoryTableViewController * foodCTC = self;
+    [manager GET:KFoodCategoryUrl parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        // 返回为最外层的 数据类型
+        for (NSDictionary * dict in responseObject[@"categories"]) {
+            
+            NSString * category = dict[@"category_name"];
+            NSArray * array = dict[@"subcategories"];
+            
+            [foodCTC.categoryArray addObject:category];
+            [foodCTC.subcategoryArray addObject:array];
+        }
+        [foodCTC.tableView reloadData];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        CLog(@"Error: %@", error);
+    }];
+}
+
+// 设置有多少个分区
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return self.categoryArray.count;
+}
+
+// 设置每个分区有多少行
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.subcategoryArray[section] count];
+}
+
+// 给cell赋值
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:(UITableViewCellStyleSubtitle) reuseIdentifier:@"cell"];
+    }
+    cell.textLabel.text = self.subcategoryArray[indexPath.section][indexPath.row];
+    
+    return cell;
+}
+
+// 为表头设置一个view
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView * view = [[UIView alloc] init];
+    view.backgroundColor = [UIColor cyanColor];
+    UILabel * lable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 30)];
+    lable.text = self.categoryArray[section];
+    lable.font = [UIFont systemFontOfSize:25];
+    [view addSubview:lable];
+    return view;
+}
+
+// 设置表头高度
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 30;
+}
+
+// 设置表头
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return self.categoryArray[section];
+}
+
+// 点击某一行返回上级页面
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString * category = self.subcategoryArray[indexPath.section][indexPath.row];
+    // 代理传值
+    if ([self.delegate respondsToSelector:@selector(sendValue:)]) {
+        [self.delegate sendValue:category];
+    }
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+// 懒加载
+-(NSMutableArray *)categoryArray {
+    if (!_categoryArray) {
+        _categoryArray = [NSMutableArray array];
+    }
+    return _categoryArray;
+}
+
+-(NSMutableArray *)subcategoryArray {
+    if (!_subcategoryArray) {
+        _subcategoryArray = [NSMutableArray array];
+    }
+    return _subcategoryArray;
+}
+
+// 点击返回按钮
+- (IBAction)didClickBackButtonItem:(UIBarButtonItem *)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    
+}
+
+
+@end

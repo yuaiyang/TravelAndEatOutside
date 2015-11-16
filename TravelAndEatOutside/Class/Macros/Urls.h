@@ -1,0 +1,37 @@
+//
+//  Urls.h
+//  TravelAndEatOutside
+//
+//  Created by 雨爱阳 on 15/10/21.
+//  Copyright © 2015年 雨爱阳. All rights reserved.
+//
+
+#ifndef Urls_h
+#define Urls_h
+
+#define kRootDataUrl(str,area_code) [NSString stringWithFormat:@"http://apiphp.yaochufa.com/you/advertiselist/AdList?column=%@=%@&version=4.4.0&imei=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&system=android&deviceToken=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&regId=04071c2710c&channel=nearme",str,area_code] // 首页View
+
+#define kCityList @"http://appapi.yaochufa.com/v2/Position/GetCityList?machineCode=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&version=4.3.1&system=android&channel=nearme" // 城市列表
+
+#define kRootCellUrl(cityCode) [NSString stringWithFormat:@"http://apiphp.yaochufa.com/playpoint/recommend?userId=&longitude=116.343761&latitude=40.030576&version=4.3.1&imei=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&system=android&deviceToken=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&regId=04071c2710c&channel=nearme&city=%@",cityCode] // 首页列表
+
+
+#define kActivityDetailOne(productId) [NSString stringWithFormat:@"http://appapi.yaochufa.com/v2/Product/GetProductInfoById?productId=%@&machineCode=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&version=4.4.0&system=android&channel=nearme",productId] // 活动详情上面部分
+
+
+
+#define kActivityWeather @"http://appapi.yaochufa.com/v2/Product/GetWeatherInfoByCity?productId=18899&machineCode=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&version=4.4.0&system=android&channel=nearme" // 天气部分
+
+
+#define kPingjiaUrl @"http://appapi.yaochufa.com/v2/Comment/GetComments?machineCode=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&version=4.4.0&system=android&channel=nearme&hasContent=false&packageid=0&pageIndex=2&pageSize=20&productId=18899" // 用户评价
+
+#define kSmallDetail(productId) [NSString stringWithFormat:@"http://appapi.yaochufa.com/v2/Product/GetProductInfoById?productId=%@&machineCode=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&version=4.4.0&system=android&channel=nearme",productId] // 运营位详情
+
+
+
+#define kSmallList(sort,propertyId,city,tagId) [NSString stringWithFormat:@"http://appapi.yaochufa.com/v2/Product/GetProductList?pageIndex=1&longitude=116.343656&latitude=40.030438&themeId=&machineCode=ffffffff-c1b5-e60c-ffff-ffffdfdab6fc&version=4.4.0&sort=%@&system=android&pageSize=20&propertyId=%@&type=tag&channel=nearme&city=%@&tagId=%@",sort,propertyId,city,tagId]//小运营位列表
+
+
+
+
+#endif /* Urls_h */

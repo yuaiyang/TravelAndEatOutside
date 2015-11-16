@@ -1,0 +1,47 @@
+//
+//  RootCellModel.h
+//  TravelPart
+//
+//  Created by lanou3g on 15/10/20.
+//  Copyright © 2015年 lanou3g. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface TravelRootCellModel : NSObject
+
+// 小运营位
+@property (nonatomic, strong)NSString * productName; // 标题
+@property (nonatomic, strong)NSString * productTitleContent; // 摘要
+@property (nonatomic, strong)NSString * cityName; //
+@property (nonatomic, assign)NSInteger price;
+@property (nonatomic, assign)NSInteger originalPrice;
+@property (nonatomic, assign)NSInteger saledCount;
+@property (nonatomic, strong)NSString * mImageUrl;//图片网址
+@property (nonatomic, assign)NSInteger app_url_site;
+@property (nonatomic, assign)NSInteger productId;
+
+
+
+
+// 首页 cell
+@property (nonatomic, strong)NSString * app_picpath; // 轮播图网址
+
+// 小运营位
+@property (nonatomic, strong)NSString * title; //标题
+@property (nonatomic, strong)NSString * app_url;//链接网址
+
+
+
+
+// 大运营位
+@property (nonatomic, strong)NSString * adTitle; //标题
+
+@property (nonatomic, strong)NSString * adSubTitle;
+
+@property (nonatomic, strong)NSString * tupian_url; //图片网址
+
+
+
+
+@end

@@ -1,0 +1,41 @@
+//
+//  PrefixHeader.pch
+//  TravelAndEatOutside
+//
+//  Created by 雨爱阳 on 15/10/21.
+//  Copyright © 2015年 雨爱阳. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#import "Urls.h"
+#import "ReadUrl.h"
+
+
+#endif /* PrefixHeader_pch */
+
+#ifndef TARGET_OS_IOS
+
+#define TARGET_OS_IOS TARGET_OS_IPHONE
+
+#endif
+
+#ifndef TARGET_OS_WATCH
+
+#define TARGET_OS_WATCH 0
+
+#endif
+
+
+// debug调试状态与release状态判断
+
+#ifdef DEBUG
+
+#define CLog(format, ...) NSLog(format, ## __VA_ARGS__)
+
+#else
+
+#define CLog(format, ...)
+
+#endif

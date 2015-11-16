@@ -1,0 +1,320 @@
+//
+//  FoodListViewController.m
+//  TravelAndEatOutside
+//
+//  Created by lanou3g on 15/10/23.
+//  Copyright © 2015年 雨爱阳. All rights reserved.
+//
+
+#import "FoodListViewController.h"
+#import "FoodListTableViewCell.h"
+#import "FoodListModel.h"
+#import "SignatrueEncryption.h"
+#import "FoodUrls.h"
+#import "FoodCategoryTableViewController.h"
+#import "KSAlertView.h"
+#import <MapKit/MapKit.h>
+#import "HelpMethod.h"
+#import "MJRefresh.h"
+
+// 遵循tableView代理,分类列表代理,位置管理者代理,搜索框代理
+@interface FoodListViewController ()<UITableViewDelegate,UITableViewDataSource,FoodCategoryTableViewControllerDelegate,CLLocationManagerDelegate,UISearchBarDelegate>
+
+
+@property (weak, nonatomic) IBOutlet UISearchBar *EatSeachBar;// 搜索框
+@property (weak, nonatomic) IBOutlet UITableView *tableView;// 取得storyboard的tableView
+@property (nonatomic,strong)NSMutableArray * allArray;// 存放解析出来的所有数据
+@property (nonatomic, copy)NSString * urlString;// 存放拼接后的网址
+@property (nonatomic, strong)FoodCategoryTableViewController * foodCTVC;// 声明foodCTVC方便调用
+
+@property (nonatomic, strong)CLLocationManager * locationManager;//  位置管理者
+@property (nonatomic,copy)NSString * cityText;// 接收单例传过来的值 用于解析
+@property (nonatomic,strong) CLGeocoder *geocoder;
+@property (nonatomic, copy)NSString * mapCityName;// 起点当前地址
+
+@property (nonatomic, assign)NSInteger pageCount; // 存放解析数据的页数
+@property (nonatomic, strong)UIActivityIndicatorView * indicatorView; //
+
+@end
+
+@implementation FoodListViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // 读取_foodCTVC并设置代理
+    [self createFoodCTVC];
+    // 给搜索框设置代理
+    self.EatSeachBar.delegate = self;
+    // 刷新
+    [self reloadView];
+}
+
+// 刷新
+- (void)reloadView {
+    // 下拉刷新
+    self.tableView.header = [MJRefreshNormalHeader headerWithRefreshingTarget:self refreshingAction:@selector(bookHeaderRefresh)];
+    // 马上进入刷新状态
+    [self.tableView.header beginRefreshing];
+    // 上拉加载
+    self.tableView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(bookFooterLoadData)];
+}
+
+// 下拉刷新
+- (void)bookHeaderRefresh {
+    // 刷新列表
+    [self.tableView reloadData];
+    
+    // 拿到当前下拉刷新控件，结束刷新
+    [self.tableView.header endRefreshing];
+}
+
+// 上拉加载
+- (void)bookFooterLoadData {
+    
+    if (self.pageCount < self.allArray.count) {
+        if (self.allArray.count - self.pageCount >= 10) {
+            self.pageCount += 10;
+            // 结束刷新
+            [self.tableView.footer endRefreshing];
+        } else{
+            self.pageCount += self.allArray.count - self.pageCount;
+            // 结束刷新
+            [self.tableView.footer endRefreshing];
+        }
+    } else {
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"数据已全部加载完毕" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction * action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:action];
+        [self presentViewController:alert animated:YES completion:nil];
+        [self.tableView.footer endRefreshing];
+    }
+    // 隐藏当前的上拉刷新控件
+    self.tableView.footer.hidden = YES;
+    // 刷新列表
+    [self.tableView reloadData];
+    
+}
+
+// 视图即将显示
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // 判断并确定城市名字
+    [self judgeValue];
+    // 解析数据
+    [self SHApreparData];
+}
+
+// 读取_foodCTVC并设置代理
+- (void)createFoodCTVC {
+    self.foodCTVC = [[UIStoryboard storyboardWithName:@"Eat" bundle:nil] instantiateViewControllerWithIdentifier:@"FoodCategory_id"];
+    // 设置代理
+    _foodCTVC.delegate = self;
+}
+
+#pragma mark---- 实现搜索框代理方法
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    self.cityText = searchBar.text;
+    self.categoryText = @"美食";
+    // 重新解析数据
+    [self SHApreparData];
+}
+
+#pragma mark---- 实现分类控制器代理方法
+-(void)sendValue:(NSString *)categoryStr {
+    self.categoryText = categoryStr;
+}
+
+// 判断并确定城市名字
+- (void)judgeValue {
+    // 做判断 默认显示定位城市--美食
+    // 单例传值
+    self.cityText = [HelpMethod sharedManager].cityName_prepar;
+    NSString * string = self.cityText;
+    if ([string isEqualToString:@""]) {
+        self.cityText = @"北京";
+    } else {
+        if ([string hasSuffix:@"市"]) {
+            self.cityText = [string stringByReplacingOccurrencesOfString:@"市" withString:@""];
+        } else {
+            self.cityText = [HelpMethod sharedManager].cityName_prepar;
+        }
+    }
+    // 判断美食类型是否为空
+    if (_categoryText == nil) {
+        self.categoryText = @"美食";
+    }
+}
+
+// 拼接网址
+- (void)SHApreparData {
+    // 将传过来的城市名字设置为标题
+    self.navigationItem.title = [[self.cityText stringByAppendingString:@"--"] stringByAppendingString:self.categoryText];
+    
+    CLog(@"城市 = %@",_cityText);
+    CLog(@"类型 = %@",_categoryText);
+    // 创建字典存储需要加密的数据
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] initWithObjectsAndKeys:_cityText,@"city",_categoryText,@"category",@"30",@"limit",@"1",@"page",nil];
+    // 进行加密
+    NSMutableDictionary * dict = [SignatrueEncryption encryptedParamsWithBaseParams:dic];
+    // 拼接网址
+    NSString * sign = dict[@"sign"];
+    // 将汉字转换为utf-8
+    NSString *city = [dict[@"city"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:dict[@"city"]]];
+    NSString * category = [dict[@"category"] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet characterSetWithCharactersInString:dict[@"category"]]];
+    
+    self.urlString = [NSString stringWithFormat:KURL,sign,city,category];
+    // 解析数据
+    [self requestByGETUseHTTPManager];
+}
+
+// 解析数据
+- (void)requestByGETUseHTTPManager {
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    
+    // 一个操作对象  和 JSON 内容  responseObject 就是 JSON 串
+    __weak FoodListViewController * foodLVC = self;
+    [manager GET:self.urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        // 清除原有的 数组 保证数据不会重复
+        [foodLVC.allArray removeAllObjects];
+        // 返回为最外层的 数据类型
+        for (NSDictionary * dict in responseObject[@"deals"]) {
+            FoodListModel * foodmode = [[FoodListModel alloc] init];
+            // kvc赋值
+            [foodmode setValuesForKeysWithDictionary:dict];
+            // 封装model
+            [foodLVC.allArray addObject:foodmode];
+        }
+        if (self.allArray.count >= 10) {
+            // 设置每次加载多少个值
+            self.pageCount = 10;
+            // 停止加载
+            [self.indicatorView stopAnimating];
+        } else {
+            self.pageCount = self.allArray.count;
+            // 停止加载
+            [self.indicatorView stopAnimating];
+        }
+        
+        // 刷新数据
+        [foodLVC.tableView reloadData];
+        
+        // 判断如果目前没有这方面的数据
+        if (_allArray.count == 0) {
+            // 创建提示框
+            [self createAlertView];
+        }
+        // 如果请求失败
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        CLog(@"Error: %@", error);
+    }];
+}
+
+// 创建提示框
+- (void)createAlertView {
+    KSAlertView * alert = [KSAlertView alertWithTittle:@"提示" Content:@"对不起!您所选择的分类还没发现..." ConfirmButton:@"北京美食" CancelButton:@"其他类型" ConfirmButtonClicked:^{
+        // 重新赋值
+        [HelpMethod sharedManager].cityName_prepar = @"北京";
+        self.categoryText = @"美食";
+        // 重新SHA加密 解析
+        [self judgeValue];
+        [self SHApreparData];
+    } CancelButtonClicked:^{
+        // 返回到分类页面
+        [self.navigationController pushViewController:_foodCTVC animated:YES];
+    }];
+    // 显示警示框
+    [alert show];
+}
+
+#pragma mark ---- 实现tableView代理方法
+// 设置有多少个分区
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+// 设置每个分区有多少行
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.pageCount;
+}
+
+// 设置cell显示的内容
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    FoodListTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"FoodList_Cell"];
+    
+    FoodListModel * model = self.allArray[indexPath.row];
+    
+    cell.foodModel = model;
+    
+    return cell;
+}
+
+// 点击cell推出下级页面
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    FoodListModel * model = self.allArray[indexPath.row];
+    self.mapCityName = [model.city stringByAppendingString:model.title];
+    CLog(@"%@%@%ld",model.city,model.title,model.current_price);
+    // 查看路线......
+    [self turnByTurn];
+}
+
+// 查看路线
+- (void)turnByTurn{
+    //根据“北京市”进行地理编码
+    [self.geocoder geocodeAddressString:@"北京市" completionHandler:^(NSArray *placemarks, NSError *error) {
+        //        CLPlacemark *clPlacemark1=[placemarks firstObject];//获取第一个地标
+        //        MKPlacemark *mkPlacemark1=[[MKPlacemark alloc]initWithPlacemark:clPlacemark1];
+        //注意地理编码一次只能定位到一个位置，不能同时定位，所在放到第一个位置定位完成回调函数中再次定位
+        [self.geocoder geocodeAddressString:self.mapCityName completionHandler:^(NSArray *placemarks, NSError *error) {
+            CLPlacemark *clPlacemark2=[placemarks firstObject];//获取第一个地标
+            MKPlacemark *mkPlacemark2=[[MKPlacemark alloc]initWithPlacemark:clPlacemark2];
+            NSDictionary *options=@{MKLaunchOptionsMapTypeKey:@(MKMapTypeStandard),MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeDriving};
+            MKMapItem *mapItem1=[MKMapItem mapItemForCurrentLocation];//当前位置
+            //            MKMapItem *mapItem1=[[MKMapItem alloc]initWithPlacemark:mkPlacemark1];
+            MKMapItem *mapItem2=[[MKMapItem alloc]initWithPlacemark:mkPlacemark2];
+            [MKMapItem openMapsWithItems:@[mapItem1,mapItem2] launchOptions:options];
+            
+        }];
+        
+    }];
+}
+
+// 懒加载
+-(NSMutableArray *)allArray {
+    if (!_allArray) {
+        _allArray = [NSMutableArray array];
+    }
+    return _allArray;
+}
+
+-(CLGeocoder *)geocoder {
+    if (!_geocoder) {
+        _geocoder = [[CLGeocoder alloc]init];
+    }
+    return _geocoder;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+// 点击空白区域隐藏键盘
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
+}
+
+// 点击地图按钮推出地图
+- (IBAction)didClickCityButtonItem:(UIBarButtonItem *)sender {
+    self.mapCityName = self.cityText;
+    // 查看路线......
+    [self turnByTurn];
+}
+
+// 点击更多按钮推出分类列表
+- (IBAction)didClickMoreButtonItem:(UIBarButtonItem *)sender {
+    [self.navigationController pushViewController:_foodCTVC animated:YES];
+}
+
+@end

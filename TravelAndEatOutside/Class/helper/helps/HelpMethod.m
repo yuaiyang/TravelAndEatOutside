@@ -1,0 +1,46 @@
+//
+//  HelpMethod.m
+//  TravelAndEatOutside
+//
+//  Created by 雨爱阳 on 15/10/22.
+//  Copyright © 2015年 雨爱阳. All rights reserved.
+//
+
+#import "HelpMethod.h"
+#import <UIKit/UIKit.h>
+
+@implementation HelpMethod
+
+#pragma mark----创建单例
+
++ (instancetype)sharedManager
+{
+    static HelpMethod * sharedManager = nil;
+    
+    static dispatch_once_t predicate;
+    
+    dispatch_once(&predicate, ^{
+        
+        sharedManager = [[[HelpMethod class] alloc] init];
+    });
+    
+    return sharedManager;
+    
+}
+
+
+// 初始化
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.cityName_prepar = [[NSString alloc] init];
+    }
+    return self;
+}
+
+
+
+
+
+@end

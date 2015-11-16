@@ -1,0 +1,37 @@
+//
+//  TravelActivityModel.h
+//  TravelAndEatOutside
+//
+//  Created by lanou3g on 15/10/24.
+//  Copyright © 2015年 雨爱阳. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface TravelActivityModel : NSObject
+
+
+
+//  活动cell
+@property (nonatomic, strong)NSString * bigImageUrl; // 图片网址
+
+@property (nonatomic, strong)NSString * labelText; //类型
+
+@property (nonatomic, strong)NSString * cityName; //城市
+
+@property (nonatomic, strong)NSString * productName; //大标题
+
+@property (nonatomic, strong)NSString * productTitleContent; //
+
+@property (nonatomic, assign)NSInteger  price;
+
+@property (nonatomic, assign)NSInteger  originalPrice; //原价
+
+@property (nonatomic, assign)NSInteger  saledCount; // 已售
+
+@property (nonatomic, strong)NSString * stateText; //可定今日
+
+@property (nonatomic, assign)NSInteger productId;
+
+
+@end
